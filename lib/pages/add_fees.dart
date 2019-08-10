@@ -63,9 +63,7 @@ class _AddFeesState extends State<AddFees> {
                           ],
                         ),
 
-                        TextBoxCustom("Student Name",
-                          "Enter Student Name",
-                        )
+                        
                       ],
                     ),
                   )
