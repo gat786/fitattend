@@ -15,8 +15,6 @@ class _AddFeesState extends State<AddFees> {
   var year = DateTime.now().year;
   var selectedDate;
 
-  var _
-
   @override
   Widget build(BuildContext context) {
     var selectedDate = "$day/$month/$year";
