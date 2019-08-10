@@ -19,7 +19,15 @@ class _AddAttendanceState extends State<AddAttendance> {
             Expanded(
                 child: Container(
               child: ListView(
-                children: <Widget>[],
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+
+
+                    ],
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                  )
+                ],
               ),
             ))
           ],

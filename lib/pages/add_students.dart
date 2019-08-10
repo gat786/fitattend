@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:fitattend/utils/navbar.dart';
 import 'package:fitattend/utils/textbox.dart';
+import 'package:fitattend/utils/database_helper.dart';
 
 class AddStudents extends StatefulWidget {
   @override
@@ -13,6 +14,9 @@ class _AddStudentsState extends State<AddStudents> {
   var month = DateTime.now().month;
   var year = DateTime.now().year;
   var selectedDate;
+
+  var _nameController = new TextEditingController();
+  var _cnameController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +37,12 @@ class _AddStudentsState extends State<AddStudents> {
                           TextBoxCustom(
                             labelString: "Student Name",
                             hintText: "Enter Student Name",
-                            controller: TextEditingController(),
+                            controller: _nameController
                           ),
                           TextBoxCustom(
                             labelString: "Course Name",
                             hintText: "Enter Course Name",
-                            controller: TextEditingController(),
+                            controller: _cnameController
                           ),
                           Container(
                             child: Padding(
@@ -94,7 +98,15 @@ class _AddStudentsState extends State<AddStudents> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: OutlineButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          DatabaseHelper helper = DatabaseHelper();
+                                          helper.addStudent(Student(
+                                            name: _nameController.text,
+                                            courseName: _cnameController.text,
+                                            startDate: selectedDate
+                                          ));
+                                          print("added value");
+                                        },
                                         borderSide:
                                             BorderSide(color: Colors.white),
                                         child: Text(

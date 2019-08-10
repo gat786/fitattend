@@ -17,7 +17,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.grey),
+      theme: ThemeData(
+        primarySwatch: Colors.grey,
+        textTheme: TextTheme(
+          subhead: TextStyle(
+            color: Colors.white
+          )
+        )
+      ),
       home: MyHomePage(),
       routes: {
         'viewstudents': (context) => ViewStudents(),

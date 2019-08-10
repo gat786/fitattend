@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:fitattend/utils/navbar.dart';
+import 'package:fitattend/utils/database_helper.dart';
 
 class ViewStudents extends StatefulWidget {
   @override
@@ -8,6 +9,25 @@ class ViewStudents extends StatefulWidget {
 }
 
 class _ViewStudentsState extends State<ViewStudents> {
+
+  List<Widget> cards = List<Widget>();
+
+  _ViewStudentsState(){
+    getStudentNames();
+  }
+
+  getStudentNames()async {
+    DatabaseHelper helper = new DatabaseHelper();
+    var studentsMap = await helper.getStudents();
+    for(var student in studentsMap){
+      var card = _studentCard(studentName: student["name"]);
+      cards.add(card);
+    }
+    setState(() {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +41,7 @@ class _ViewStudentsState extends State<ViewStudents> {
               child: ListView(
                 children: <Widget>[
                   _studentCard(studentName: "Lincoln Burrows")
-                ],
+                ] + cards,
               ),
             ))
           ],
@@ -30,9 +50,10 @@ class _ViewStudentsState extends State<ViewStudents> {
     );
   }
 
+
   Widget _studentCard({studentName}) {
     return Padding(
-      padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+      padding: const EdgeInsets.only(right: 16.0, left: 16.0,bottom:8.0),
       child: Container(
         height: 100.0,
         decoration: BoxDecoration(
