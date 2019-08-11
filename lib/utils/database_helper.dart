@@ -24,21 +24,23 @@ class Student{
 
 class Attendance{
   String id;
+  String studentId;
   String date;
   String timing;
 
-  Attendance({this.id,this.date,this.timing});
+  Attendance({this.id,this.studentId,this.date,this.timing});
 
   Map<String,String> toMap(){
     return {
       "id":id,
+      "studentId":studentId,
       "date":date,
       "timing":timing
     };
   }
 
   String toString(){
-    return "$id $date $timing";
+    return "$id $studentId $date $timing";
   }
 }
 
@@ -90,7 +92,7 @@ class DatabaseHelper{
   addStudent(Student student)async{
     final Database db = await openDB();
     
-    await db.insert('students', student.toMap());
+    return await db.insert('students', student.toMap());
   }
 
   getStudents() async {
@@ -104,7 +106,7 @@ class DatabaseHelper{
   addFees(Fees fees) async {
     final Database db = await openDB();
 
-    await db.insert('fees', fees.toMap());
+    return await db.insert('fees', fees.toMap());
   }
 
   getFees()async{
@@ -135,5 +137,16 @@ class DatabaseHelper{
       students.add(student);
     }
     return students;
+  }
+
+  addAttendance(Attendance attendance)async {
+    var db = await openDB();
+    return db.insert('attendance', attendance.toMap());
+  }
+
+  getAttendance(studentId)async{
+    var db = await openDB();
+    var results = db.query('attendance',where: "studentId = $studentId");
+    return results;
   }
 }

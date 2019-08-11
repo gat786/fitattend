@@ -4,6 +4,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fitattend/utils/navbar.dart';
 import 'package:fitattend/utils/database_helper.dart';
 import 'package:fitattend/utils/textbox.dart';
+import 'package:fitattend/utils/suggestion_field.dart';
 
 class AddFees extends StatefulWidget {
   @override
@@ -12,11 +13,6 @@ class AddFees extends StatefulWidget {
 
 class _AddFeesState extends State<AddFees> {
   var dropdownValue;
-
-
-  _AddFeesState(){
-    _loadStudents();
-  }
 
   var day = DateTime.now().day;
   var month = DateTime.now().month;
@@ -27,10 +23,6 @@ class _AddFeesState extends State<AddFees> {
   var students = List<Student>();
   var _suggestController = TextEditingController();
   var _ammountController = TextEditingController();
-
-  _loadStudents() async {
-    students = await DatabaseHelper().getStudentsStructured();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,68 +48,12 @@ class _AddFeesState extends State<AddFees> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Text("Student Name",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
 
-                              TypeAheadField(
-                                textFieldConfiguration: TextFieldConfiguration(
-                                    decoration: InputDecoration(
-                                        suffixIcon: Icon(Icons.search,
-                                          color: Colors.white,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.white
-                                          ),
-                                        ),
-                                        enabledBorder:OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.white
-                                          ),
-                                        ),
-                                        hintText: "Enter Name",
-                                        hintStyle: TextStyle(
-                                            color: Colors.white
-                                        )
-                                    ),
-                                  controller: _suggestController
-                                ),
 
-                                suggestionsBoxDecoration: SuggestionsBoxDecoration(
-                                  color: Colors.grey
-                                ),
+                              AutoCompleteFieldStudent(_suggestController,(Student student){
+                                selectedStudent = student;
+                              })
 
-                                suggestionsCallback: (pattern) async {
-                                  List<String> suggestions = List<String>();
-                                  for(var item in students){
-                                    if(item.name.toLowerCase().contains(pattern.toLowerCase())){
-                                      suggestions.add(item.name);
-                                    }
-                                  }
-                                  return suggestions;
-                                },
-
-                                itemBuilder: (context,suggestion){
-                                  return ListTile(
-                                    title: Text(suggestion),
-                                  );
-                                },
-
-                                onSuggestionSelected: (suggestionText){
-                                  _suggestController.text = suggestionText;
-                                  for(var item in students){
-                                    if(suggestionText == item.name){
-                                      selectedStudent = item;
-                                    }
-                                  }
-                                  print(selectedStudent);
-                                },
-
-                              ),
                             ],
                           ),
                         ),
@@ -180,6 +116,7 @@ class _AddFeesState extends State<AddFees> {
                                 timestamp: DateTime.now().toString()
                               );
 
+                              print(selectedStudent);
                               var helper = new DatabaseHelper();
                               helper.addFees(fees);
                               },
@@ -232,7 +169,7 @@ class _AddFeesState extends State<AddFees> {
           DropdownButton<String>(
             value: dropdownValue,
             iconEnabledColor: Colors.white,
-              onChanged: (String newValue) {
+              onChanged: (newValue) {
                 setState(() {
                   dropdownValue = newValue;
                 });
