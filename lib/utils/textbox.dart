@@ -4,8 +4,9 @@ class TextBoxCustom extends StatefulWidget {
   String labelString;
   String hintText;
   TextEditingController controller;
+  TextInputType textInputType;
 
-  TextBoxCustom({this.labelString, this.hintText, this.controller});
+  TextBoxCustom({this.labelString, this.hintText, this.controller,this.textInputType});
 
   @override
   _TextBoxCustomState createState() => _TextBoxCustomState();
@@ -40,6 +41,7 @@ class _TextBoxCustomState extends State<TextBoxCustom> {
               ),
               style: TextStyle(color: Colors.white),
               controller: widget.controller,
+              keyboardType: (widget.textInputType!=null)?widget.textInputType:TextInputType.text,
             ),
           ],
         ),

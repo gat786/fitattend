@@ -111,4 +111,18 @@ class DatabaseHelper{
 
     return results;
   }
+
+  Future<List<Student>> getStudentsStructured() async {
+    List<Student> students = new List<Student>();
+    var result = await getStudents();
+    for(var item in result){
+      Student student = Student(
+          name: item["name"],
+          startDate: item["startDate"],
+          courseName: item["courseName"]);
+      students.add(student);
+    }
+    print(students);
+    return students;
+  }
 }
