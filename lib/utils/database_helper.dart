@@ -2,11 +2,12 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class Student{
+  String id;
   String name;
   String startDate;
   String courseName;
 
-  Student({this.name,this.startDate,this.courseName});
+  Student({this.name,this.startDate,this.courseName,this.id});
 
   Map<String,String> toMap(){
     return {
@@ -77,6 +78,8 @@ class DatabaseHelper{
             "studentId INTEGER, date NUMERIC , timing TEXT);");
         db.execute("CREATE TABLE fees(id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "studentId INTEGER, amount INTEGER , forMonths INTEGER, timestamp TEXT);");
+        db.execute("CREATE VIEW feesrecieved  AS SELECT f.studentId , f.amount , f.timestamp , f.forMonths , "
+            "s.name FROM students AS s , fees AS f WHERE f.studentId = s.id");
       },
       version: 1,
     );
@@ -112,17 +115,25 @@ class DatabaseHelper{
     return results;
   }
 
+  getFeesRecieved()async{
+    final Database db = await openDB();
+
+    var results = await db.query('feesrecieved');
+
+    return results;
+  }
+
   Future<List<Student>> getStudentsStructured() async {
     List<Student> students = new List<Student>();
     var result = await getStudents();
     for(var item in result){
       Student student = Student(
-          name: item["name"],
-          startDate: item["startDate"],
-          courseName: item["courseName"]);
+        id: item["id"].toString(),
+        name: item["name"],
+        startDate: item["startDate"],
+        courseName: item["courseName"]);
       students.add(student);
     }
-    print(students);
     return students;
   }
 }

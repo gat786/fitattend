@@ -14,7 +14,7 @@ class Navbar extends StatelessWidget {
             border: BorderDirectional(
                 bottom: BorderSide(color: Colors.white.withOpacity(0.4)))),
         child: Padding(
-          padding: const EdgeInsets.only(top: 54.0, left: 16.0, bottom: 24.0),
+          padding: const EdgeInsets.only(top: 54.0, left: 16.0, bottom: 16.0),
           child: Row(
             children: <Widget>[
               (this.isBackAllowed)

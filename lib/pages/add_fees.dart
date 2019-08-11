@@ -11,7 +11,7 @@ class AddFees extends StatefulWidget {
 }
 
 class _AddFeesState extends State<AddFees> {
-  var dropdownValue = "One";
+  var dropdownValue;
 
 
   _AddFeesState(){
@@ -167,31 +167,33 @@ class _AddFeesState extends State<AddFees> {
                           textInputType: TextInputType.numberWithOptions(),
                         ),
 
-                        Theme(
-                            data: ThemeData(
-                              canvasColor: Colors.grey,
-                              textTheme: TextTheme(
-                                button: TextStyle(
-                                  color:Colors.blue
-                                )
-                              )
+                        _builtNoMonthsSelector(),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: OutlineButton(onPressed: (){
+                              var fees = Fees(
+                                studentId: selectedStudent.id,
+                                amount: _ammountController.text,
+                                forMonths: dropdownValue,
+                                timestamp: DateTime.now().toString()
+                              );
+
+                              var helper = new DatabaseHelper();
+                              helper.addFees(fees);
+                              },
+                              child: Text("Add",
+                                style: TextStyle(
+                                  color:Colors.white
+                                ),
+                              ),
+                              borderSide: BorderSide(
+                                color:Colors.white
+                              ),
                             ),
-                            child: DropdownButton<String>(
-                                value: dropdownValue,
-                                onChanged: (String newValue) {
-                                  setState(() {
-                                    dropdownValue = newValue;
-                                  });
-                                },
-                                items: <String>['One', 'Two', 'Free', 'Four']
-                                    .map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value,
-                                    ),
-                                  );
-                                }).toList()),
-                        ),
+                          ),
+                        )
                       ],
                     ),
 
@@ -202,6 +204,46 @@ class _AddFeesState extends State<AddFees> {
         ),
       ),
     );
+  }
+
+  _builtNoMonthsSelector(){
+    List<DropdownMenuItem<String>> list = List<DropdownMenuItem<String>>();
+    for(int i = 1; i <= 12; i++){
+      var item = DropdownMenuItem<String>(
+        child: Text("$i"),
+        value: "$i",
+      );
+      list.add(item);
+    }
+
+    Widget dropdown = Theme(
+      data: ThemeData.dark(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0,right: 8.0),
+            child: Text("Select Number of months",
+              style: TextStyle(
+                color: Colors.white
+              ),
+            ),
+          ),
+          DropdownButton<String>(
+            value: dropdownValue,
+            iconEnabledColor: Colors.white,
+              onChanged: (String newValue) {
+                setState(() {
+                  dropdownValue = newValue;
+                });
+              },
+              items: list,
+            hint: Text("Number of months"),
+          ),
+        ],
+      )
+    );
+    return dropdown;
   }
 
   _showDatePicker() async {
