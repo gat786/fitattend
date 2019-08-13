@@ -37,7 +37,7 @@ class _AutoCompleteFieldStudentState extends State<AutoCompleteFieldStudent> {
           ),
         ),
 
-        TypeAheadField(
+        TypeAheadFormField(
           textFieldConfiguration: TextFieldConfiguration(
               decoration: InputDecoration(
                   suffixIcon: Icon(Icons.search,
@@ -89,7 +89,7 @@ class _AutoCompleteFieldStudentState extends State<AutoCompleteFieldStudent> {
               }
             }
           },
-
+          validator: (val)=>(val.isEmpty)?"This cant be empty":null,
         ),
       ],
     );

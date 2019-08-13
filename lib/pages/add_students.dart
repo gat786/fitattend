@@ -18,6 +18,8 @@ class _AddStudentsState extends State<AddStudents> {
   var _nameController = new TextEditingController();
   var _cnameController = new TextEditingController();
 
+  final _formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     var selectedDate = "$day/$month/$year";
@@ -28,110 +30,141 @@ class _AddStudentsState extends State<AddStudents> {
           children: <Widget>[
             Navbar("Add Students", true),
             Expanded(
-              child: Container(
-                child: ListView(
-                  children: <Widget>[
-                    Form(
-                      child: Column(
-                        children: <Widget>[
-                          TextBoxCustom(
-                            labelString: "Student Name",
-                            hintText: "Enter Student Name",
-                            controller: _nameController
-                          ),
-                          TextBoxCustom(
-                            labelString: "Course Name",
-                            hintText: "Enter Course Name",
-                            controller: _cnameController
-                          ),
-                          Container(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: Text(
-                                      "Start Date",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Text(
-                                          selectedDate,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 32.0),
-                                        ),
-                                      ),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down,
-                                            color: Colors.white,
-                                          ),
-                                          onPressed: () {
-                                            _showDatePicker();
-                                          })
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Center(
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2,
-                                        child: Text(
-                                          "Note if you don't select any date it automatically sets todays date",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: OutlineButton(
-                                        onPressed: () {
-                                          DatabaseHelper helper = DatabaseHelper();
-                                          helper.addStudent(Student(
-                                            name: _nameController.text,
-                                            courseName: _cnameController.text,
-                                            startDate: selectedDate
-                                          ));
-                                          print("added value");
-                                        },
-                                        borderSide:
-                                            BorderSide(color: Colors.white),
-                                        child: Text(
-                                          "Add",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
+                child: Container(
+                  child: ListView(
+                    children: <Widget>[
+                      Form(
+                        key: _formkey,
+                        child: Column(
+                          children: <Widget>[
+                            TextBoxCustom(
+                              labelString: "Student Name",
+                              hintText: "Enter Student Name",
+                              controller: _nameController
                             ),
-                          )
-                        ],
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                            TextBoxCustom(
+                              labelString: "Course Name",
+                              hintText: "Enter Course Name",
+                              controller: _cnameController
+                            ),
+                            Container(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 8.0),
+                                      child: Text(
+                                        "Start Date",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Text(
+                                            selectedDate,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 32.0),
+                                          ),
+                                        ),
+                                        IconButton(
+                                            icon: Icon(
+                                              Icons.keyboard_arrow_down,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed: () {
+                                              _showDatePicker();
+                                            })
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Center(
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width /
+                                                  2,
+                                          child: Text(
+                                            "Note if you don't select any date it automatically sets todays date",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: OutlineButton(
+                                          onPressed: () {
+                                            var form = _formkey.currentState;
+                                            if(form.validate()){
+                                              DatabaseHelper helper = DatabaseHelper();
+                                              helper.addStudent(Student(
+                                                  name: _nameController.text,
+                                                  courseName: _cnameController.text,
+                                                  startDate: selectedDate
+                                              ));
+                                              _showSimpleDialog();
+                                              _clearFields();
+                                              print("added value");
+                                            }
+
+                                          },
+                                          borderSide:
+                                              BorderSide(color: Colors.white),
+                                          child: Text(
+                                            "Add",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
             )
           ],
         ),
       ),
     );
+  }
+
+  _clearFields(){
+    _nameController.text = "";
+    _cnameController.text = "";
+    selectedDate = DateTime.now();
+    day = selectedDate.day;
+    month = selectedDate.month;
+    year = selectedDate.year;
+  }
+  _showSimpleDialog(){
+    return showDialog(context: context,builder: (context){
+      return AlertDialog(
+        title: Text("Student Added Successfully"),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("Okay"),
+            onPressed: (){
+              Navigator.pop(context);
+            },
+          )
+        ],
+      );
+    });
   }
 
   _showDatePicker() async {

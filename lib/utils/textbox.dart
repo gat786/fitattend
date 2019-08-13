@@ -42,6 +42,7 @@ class _TextBoxCustomState extends State<TextBoxCustom> {
               style: TextStyle(color: Colors.white),
               controller: widget.controller,
               keyboardType: (widget.textInputType!=null)?widget.textInputType:TextInputType.text,
+              validator: (text)=> text.isEmpty?"This field cant be empty":null,
             ),
           ],
         ),

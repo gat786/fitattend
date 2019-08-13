@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'package:fitattend/utils/navbar.dart';
 import 'package:fitattend/utils/database_helper.dart';
@@ -12,7 +11,7 @@ class AddFees extends StatefulWidget {
 }
 
 class _AddFeesState extends State<AddFees> {
-  var dropdownValue;
+  var dropdownValue = "No of months";
 
   var day = DateTime.now().day;
   var month = DateTime.now().month;
@@ -24,9 +23,12 @@ class _AddFeesState extends State<AddFees> {
   var _suggestController = TextEditingController();
   var _ammountController = TextEditingController();
 
+  static var _formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     var selectedDate = "$day/$month/$year";
+
+
 
 
     return Scaffold(
@@ -39,100 +41,109 @@ class _AddFeesState extends State<AddFees> {
                 child: Container(
               child: ListView(
                 children: <Widget>[
-                   Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
+                   Form(
+                     key: _formkey,
+                     child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
 
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0,right: 16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0,right: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
 
 
-                              AutoCompleteFieldStudent(_suggestController,(Student student){
-                                selectedStudent = student;
-                              })
+                                AutoCompleteFieldStudent(_suggestController,(Student student){
+                                  selectedStudent = student;
+                                })
 
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
 
-                        Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Text(
-                                  "Select Date",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text(
-                                      selectedDate,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 32.0),
+                          Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Text(
+                                    "Select Date",
+                                    style: TextStyle(
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  IconButton(
-                                      icon: Icon(
-                                        Icons.keyboard_arrow_down,
-                                        color: Colors.white,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                        selectedDate,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 32.0),
                                       ),
-                                      onPressed: () {
-                                        _showDatePicker();
-                                      })
-                                ],
-                              ),
-                            ],
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                                    ),
+                                    IconButton(
+                                        icon: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          _showDatePicker();
+                                        })
+                                  ],
+                                ),
+                              ],
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                            ),
                           ),
-                        ),
 
-                        TextBoxCustom(
-                          labelString: "Amount",
-                          hintText: "Enter Amount Recieved",
-                          controller: _ammountController,
-                          textInputType: TextInputType.numberWithOptions(),
-                        ),
+                          TextBoxCustom(
+                            labelString: "Amount",
+                            hintText: "Enter Amount Recieved",
+                            controller: _ammountController,
+                            textInputType: TextInputType.numberWithOptions(),
+                          ),
 
-                        _builtNoMonthsSelector(),
+                          Center(
+                            child: _builtNoMonthsSelector(),
+                          ),
 
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: OutlineButton(onPressed: (){
-                              var fees = Fees(
-                                studentId: selectedStudent.id,
-                                amount: _ammountController.text,
-                                forMonths: dropdownValue,
-                                timestamp: DateTime.now().toString()
-                              );
 
-                              print(selectedStudent);
-                              var helper = new DatabaseHelper();
-                              helper.addFees(fees);
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: OutlineButton(onPressed: () {
+                                var form = _formkey.currentState;
+                                if (form.validate()) {
+                                  var fees = Fees(
+                                      studentId: selectedStudent.id,
+                                      amount: _ammountController.text,
+                                      forMonths: dropdownValue,
+                                      timestamp: DateTime.now().toString()
+                                  );
+
+                                  print(selectedStudent);
+                                  var helper = new DatabaseHelper();
+                                  helper.addFees(fees);
+                                }
                               },
-                              child: Text("Add",
-                                style: TextStyle(
+                                child: Text("Add",
+                                  style: TextStyle(
+                                    color:Colors.white
+                                  ),
+                                ),
+                                borderSide: BorderSide(
                                   color:Colors.white
                                 ),
                               ),
-                              borderSide: BorderSide(
-                                color:Colors.white
-                              ),
                             ),
-                          ),
-                        )
-                      ],
-                    ),
+                          )
+                        ],
+                      ),
+                   ),
 
                 ],
               ),
@@ -145,6 +156,7 @@ class _AddFeesState extends State<AddFees> {
 
   _builtNoMonthsSelector(){
     List<DropdownMenuItem<String>> list = List<DropdownMenuItem<String>>();
+    list.add(DropdownMenuItem(child: Text("No of months"),value: dropdownValue,));
     for(int i = 1; i <= 12; i++){
       var item = DropdownMenuItem<String>(
         child: Text("$i"),
@@ -155,28 +167,40 @@ class _AddFeesState extends State<AddFees> {
 
     Widget dropdown = Theme(
       data: ThemeData.dark(),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0,right: 8.0),
-            child: Text("Select Number of months",
-              style: TextStyle(
-                color: Colors.white
-              ),
+          Text("Select Number of months",
+            style: TextStyle(
+              color: Colors.white
             ),
           ),
-          DropdownButton<String>(
-            value: dropdownValue,
-            iconEnabledColor: Colors.white,
-              onChanged: (newValue) {
+
+          Container(
+            width: 200,
+            child: DropdownButtonFormField<String>(
+              items: list,
+              value: dropdownValue,
+              onChanged: (val){
                 setState(() {
-                  dropdownValue = newValue;
+                  dropdownValue = val;
                 });
               },
-              items: list,
-            hint: Text("Number of months"),
+              validator: (val) => (val==dropdownValue)?"Please Choose something":null,
+
+            ),
           ),
+
+//          DropdownButton<String>(
+//            value: dropdownValue,
+//            iconEnabledColor: Colors.white,
+//              onChanged: (newValue) {
+//                setState(() {
+//                  dropdownValue = newValue;
+//                });
+//              },
+//              items: list,
+//            hint: Text("Number of months"),
+//          ),
         ],
       )
     );

@@ -22,6 +22,24 @@ class Student{
   }
 }
 
+class EventData{
+  DateTime date;
+  String timing;
+
+  EventData({this.date,this.timing});
+
+  Map<String,String> toMap(){
+    return {
+      "date":date.toString(),
+      "timing":timing
+    };
+  }
+
+  String toString(){
+    return "$date $timing";
+  }
+}
+
 class Attendance{
   String id;
   String studentId;
@@ -82,6 +100,8 @@ class DatabaseHelper{
             "studentId INTEGER, amount INTEGER , forMonths INTEGER, timestamp TEXT);");
         db.execute("CREATE VIEW feesrecieved  AS SELECT f.studentId , f.amount , f.timestamp , f.forMonths , "
             "s.name FROM students AS s , fees AS f WHERE f.studentId = s.id");
+        db.execute("CREATE VIEW attendancedetailed  AS SELECT a.studentId , a.date , a.timing, "
+            "s.name FROM students AS s , attendance AS a WHERE a.studentId = s.id");
       },
       version: 1,
     );
@@ -147,6 +167,12 @@ class DatabaseHelper{
   getAttendance(studentId)async{
     var db = await openDB();
     var results = db.query('attendance',where: "studentId = $studentId");
+    return results;
+  }
+
+  getAttendanceDetailed([studentId])async{
+    var db = await openDB();
+    var results = (studentId!=null)?db.query('attendancedetailed',having: "studentID = $studentId"):db.query('attendancedetailed');
     return results;
   }
 }

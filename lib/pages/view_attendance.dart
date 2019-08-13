@@ -14,7 +14,9 @@ class _ViewAttendanceState extends State<ViewAttendance> {
   TextEditingController _controller = TextEditingController();
   Student _selectedStudent;
   var attendance;
+  var _eventList = EventList<Map>();
   bool isAttendanceLoaded = true;
+
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +42,9 @@ class _ViewAttendanceState extends State<ViewAttendance> {
                             padding: const EdgeInsets.only(top: 8.0),
                             child: OutlineButton(
                               onPressed: ()async {
-                                attendance = await DatabaseHelper().getAttendance(_selectedStudent.id);
-                                print(attendance);
+                                var db = DatabaseHelper();
+                                var results = await db.getAttendanceDetailed();
+                                generateEventsMap(results);
                                 setState(() {
                                   isAttendanceLoaded = false;
                                 });
@@ -69,6 +72,19 @@ class _ViewAttendanceState extends State<ViewAttendance> {
                   weekendTextStyle: TextStyle(
                     color: Colors.yellow
                   ),
+                  markedDatesMap: _eventList,
+                  markedDateIconBuilder: (event){
+                    return Container(
+                      height: 40.0,
+                      width: 40.0,
+                      color: Colors.green,
+                      child: Center(child: Text(
+                          event["date"].toString(),
+                        style: TextStyle(color: Colors.white),
+                      )),
+                    );
+                  },
+                  todayButtonColor: Colors.white.withAlpha(50),
                 )
               )
             )
@@ -77,4 +93,22 @@ class _ViewAttendanceState extends State<ViewAttendance> {
       ),
     );
   }
+
+
+  void generateEventsMap(results) {
+    print(results);
+    for(var record in results){
+        var date = DateTime.parse(record["date"]);
+        var timing = record["timing"];
+
+        var reqDate = DateTime(date.year,date.month,date.day);
+        var items = {
+          "date":date.day,
+          "timing":timing
+        };
+
+        _eventList.add(reqDate, items);
+    }
+  }
 }
+
