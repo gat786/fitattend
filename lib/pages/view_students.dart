@@ -40,7 +40,6 @@ class _ViewStudentsState extends State<ViewStudents> {
                 child: Container(
               child: ListView(
                 children: <Widget>[
-                  _studentCard(studentName: "Lincoln Burrows")
                 ] + cards,
               ),
             ))
