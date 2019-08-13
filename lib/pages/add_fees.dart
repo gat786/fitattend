@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dropdown_formfield/dropdown_formfield.dart';
 
 import 'package:fitattend/utils/navbar.dart';
 import 'package:fitattend/utils/database_helper.dart';
@@ -11,7 +12,7 @@ class AddFees extends StatefulWidget {
 }
 
 class _AddFeesState extends State<AddFees> {
-  var dropdownValue = "No of months";
+  var dropdownValue;
 
   var day = DateTime.now().day;
   var month = DateTime.now().month;
@@ -124,10 +125,12 @@ class _AddFeesState extends State<AddFees> {
                                       forMonths: dropdownValue,
                                       timestamp: DateTime.now().toString()
                                   );
-
-                                  print(selectedStudent);
                                   var helper = new DatabaseHelper();
                                   helper.addFees(fees);
+                                  _showSuccessDialog();
+                                  this.setState((){
+
+                                  });
                                 }
                               },
                                 child: Text("Add",
@@ -154,14 +157,45 @@ class _AddFeesState extends State<AddFees> {
     );
   }
 
-  _builtNoMonthsSelector(){
-    List<DropdownMenuItem<String>> list = List<DropdownMenuItem<String>>();
-    list.add(DropdownMenuItem(child: Text("No of months"),value: dropdownValue,));
-    for(int i = 1; i <= 12; i++){
-      var item = DropdownMenuItem<String>(
-        child: Text("$i"),
-        value: "$i",
+  _clearAllFields(){
+    _suggestController.text = "";
+    _ammountController.text = "";
+    dropdownValue = "1";
+    var now = DateTime.now();
+    day = now.day;
+    month = now.month;
+    year = now.year;
+  }
+
+  _showSuccessDialog(){
+    return showDialog(context: context,builder: (context){
+      return AlertDialog(
+        title: Text("Fees was successfully added to database"),
+        actions: <Widget>[
+          FlatButton(onPressed: ()
+            {
+              Navigator.pop(context);
+              _clearAllFields();
+            },
+            child: Text("Okay")
+          ),
+          FlatButton(onPressed: (){
+            
+          },
+            child: Text("Share"),
+          )
+        ],
       );
+    });
+  }
+
+  _builtNoMonthsSelector(){
+    var list = List<Map<String,String>>();
+    for(int i = 1; i <= 12; i++){
+      var item = {
+        "display": "$i",
+        "value": "$i",
+      };
       list.add(item);
     }
 
@@ -169,38 +203,32 @@ class _AddFeesState extends State<AddFees> {
       data: ThemeData.dark(),
       child: Column(
         children: <Widget>[
-          Text("Select Number of months",
-            style: TextStyle(
-              color: Colors.white
-            ),
-          ),
 
           Container(
             width: 200,
-            child: DropdownButtonFormField<String>(
-              items: list,
-              value: dropdownValue,
+            child: DropDownFormField(
+              titleText: "Number of Months",
+              hintText: "Please select one",
+              dataSource: list,
+              textField: 'display',
+              valueField: 'value',
+              value:dropdownValue,
               onChanged: (val){
                 setState(() {
                   dropdownValue = val;
                 });
               },
-              validator: (val) => (val==dropdownValue)?"Please Choose something":null,
-
+              onSaved: (val){
+                setState(() {
+                  dropdownValue = val;
+                });
+              },
+              errorText: "Cannot be Empty",
+              validator: (value){
+                return (value == null || value == "")?"Cannot be empty":null;
+              }
             ),
           ),
-
-//          DropdownButton<String>(
-//            value: dropdownValue,
-//            iconEnabledColor: Colors.white,
-//              onChanged: (newValue) {
-//                setState(() {
-//                  dropdownValue = newValue;
-//                });
-//              },
-//              items: list,
-//            hint: Text("Number of months"),
-//          ),
         ],
       )
     );

@@ -6,6 +6,7 @@ import 'package:fitattend/pages/add_attendance.dart';
 import 'package:fitattend/pages/view_attendance.dart';
 import 'package:fitattend/pages/add_fees.dart';
 import 'package:fitattend/pages/view_fees.dart';
+import 'package:fitattend/pages/generate_receipt.dart';
 
 import 'package:fitattend/utils/navbar.dart';
 
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
         'addattendance': (context) => AddAttendance(),
         'viewattendance': (context) => ViewAttendance(),
         'viewfees': (context) => ViewFees(),
-        'addfees': (context) => AddFees()
+        'addfees': (context) => AddFees(),
+        'genreceipt':(context)=>GenerateReceipt()
       },
     );
   }

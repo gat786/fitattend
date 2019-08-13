@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dropdown_formfield/dropdown_formfield.dart';
 
 import 'package:fitattend/utils/navbar.dart';
 import 'package:fitattend/utils/database_helper.dart';
@@ -18,6 +19,24 @@ class _AddAttendanceState extends State<AddAttendance> {
   var valueToStore = DateTime.now().toString();
   var selectedDate;
 
+  var list = [
+    {
+      "display": "6 - 7 morning",
+      "value": "6 - 7 morning",
+    },
+    {
+      "display":"7 - 8 morning",
+      "value": "7 - 8 morning",
+    },
+    {
+      "display": "5 - 6 evening",
+      "value": "5 - 6 evening",
+    },
+    {
+      "display":"6 - 7 evening",
+      "value": "6 - 7 evening",
+    }];
+
   var selectedStudent = Student();
   var students = List<Student>();
   var _suggestController = TextEditingController();
@@ -26,7 +45,7 @@ class _AddAttendanceState extends State<AddAttendance> {
 
   static var _formkey = GlobalKey<FormState>();
 
-  var dropdownValue = "SelectSomething";
+  var dropdownValue;
   @override
   Widget build(BuildContext context) {
 
@@ -106,40 +125,31 @@ class _AddAttendanceState extends State<AddAttendance> {
                                 data: ThemeData.dark(),
                                 child: Container(
                                   width: 200,
-                                  child: DropdownButtonFormField<String>(
-                                    items: [
-                                      DropdownMenuItem<String>(
-                                        child: Text("Select a timing"),
-                                        value: "SelectSomething",
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        child: Text("6 - 7 morning"),
-                                        value: "6 - 7 morning",
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        child: Text("7 - 8 morning"),
-                                        value: "7 - 8 morning",
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        child: Text("5 - 6 evening"),
-                                        value: "5 - 6 evening",
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        child: Text("6 - 7 evening"),
-                                        value: "6 - 7 evening",
-                                      )
-                                    ],
-                                    value: dropdownValue,
-                                    onChanged: (val){
-                                      setState(() {
-                                        dropdownValue = val;
-                                      });
-                                    },
-                                    validator: (val) => (val==dropdownValue)?"Please Choose something":null,
-
+                                  child: DropDownFormField(
+                                      titleText: "Time Slot",
+                                      hintText: "Please select one",
+                                      dataSource: list,
+                                      textField: 'display',
+                                      valueField: 'value',
+                                      value:dropdownValue,
+                                      onChanged: (val){
+                                        setState(() {
+                                          dropdownValue = val;
+                                        });
+                                      },
+                                      onSaved: (val){
+                                        setState(() {
+                                          dropdownValue = val;
+                                        });
+                                      },
+                                      errorText: "Cannot be Empty",
+                                      validator: (value){
+                                        return (value == null || value == "")?"Cannot be empty":null;
+                                      }
                                   ),
                                 ),
                               ),
+
                             ],
                             crossAxisAlignment: CrossAxisAlignment.center,
                           ),
@@ -154,7 +164,7 @@ class _AddAttendanceState extends State<AddAttendance> {
                                     var attendanceInstance = Attendance(
                                         studentId: selectedStudent.id,
                                         date: valueToStore,
-                                        timing: _defaultDropdownValue
+                                        timing: dropdownValue
                                     );
                                     var helper = DatabaseHelper();
                                     helper.addAttendance(attendanceInstance);
