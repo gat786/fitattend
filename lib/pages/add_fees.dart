@@ -63,43 +63,43 @@ class _AddFeesState extends State<AddFees> {
                             ),
                           ),
 
-                          Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: Text(
-                                    "Select Date",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Text(
-                                        selectedDate,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 32.0),
-                                      ),
-                                    ),
-                                    IconButton(
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () {
-                                          _showDatePicker();
-                                        })
-                                  ],
-                                ),
-                              ],
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                            ),
-                          ),
+//                          Padding(
+//                            padding: EdgeInsets.all(16.0),
+//                            child: Column(
+//                              children: <Widget>[
+//                                Padding(
+//                                  padding: const EdgeInsets.only(bottom: 8.0),
+//                                  child: Text(
+//                                    "Select Date",
+//                                    style: TextStyle(
+//                                      color: Colors.white,
+//                                    ),
+//                                  ),
+//                                ),
+//                                Row(
+//                                  children: <Widget>[
+//                                    Expanded(
+//                                      child: Text(
+//                                        selectedDate,
+//                                        style: TextStyle(
+//                                            color: Colors.white,
+//                                            fontSize: 32.0),
+//                                      ),
+//                                    ),
+//                                    IconButton(
+//                                        icon: Icon(
+//                                          Icons.keyboard_arrow_down,
+//                                          color: Colors.white,
+//                                        ),
+//                                        onPressed: () {
+//                                          _showDatePicker();
+//                                        })
+//                                  ],
+//                                ),
+//                              ],
+//                              crossAxisAlignment: CrossAxisAlignment.start,
+//                            ),
+//                          ),
 
                           TextBoxCustom(
                             labelString: "Amount",
@@ -180,7 +180,12 @@ class _AddFeesState extends State<AddFees> {
             child: Text("Okay")
           ),
           FlatButton(onPressed: (){
-            
+            Navigator.pushNamed(context, 'genreceipt',arguments: FeesReceiptBuildingInformation(
+              name: selectedStudent.name,
+              amount: int.parse(_ammountController.text),
+              date: (_pickedDate == null) ? DateTime.now() : _pickedDate,
+              periodInMonths: int.parse(dropdownValue)
+            ));
           },
             child: Text("Share"),
           )
@@ -235,6 +240,8 @@ class _AddFeesState extends State<AddFees> {
     return dropdown;
   }
 
+  DateTime _pickedDate;
+
   _showDatePicker() async {
     DateTime picked = await showDatePicker(
         context: context,
@@ -248,6 +255,7 @@ class _AddFeesState extends State<AddFees> {
           );
         });
     if (picked != null) {
+      _pickedDate = picked;
       day = picked.day;
       month = picked.month;
       year = picked.year;

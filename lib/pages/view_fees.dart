@@ -22,7 +22,7 @@ class _ViewFeesState extends State<ViewFees> {
     print("making list");
     for(var item in results){
       var date = DateTime.parse(item["timestamp"]);
-      var _listItem = _listFees(item["name"],item["amount"],"${date.day}.${date.month}.${date.year}");
+      var _listItem = _listFees(item["name"],item["amount"],date,item["forMonths"]);
       listFeesItem.add(_listItem);
     }
     this.setState((){});
@@ -53,10 +53,17 @@ class _ViewFeesState extends State<ViewFees> {
       );
     }
 
-  _listFees(name,amount,date){
+  _listFees(name,amount,date,forMonths){
     return InkWell(
       onTap: (){
-
+        Navigator.of(context).pushNamed('genreceipt',arguments:
+          FeesReceiptBuildingInformation(
+            name: name,
+            amount: amount,
+            date: date,
+            periodInMonths: forMonths
+          )
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -86,7 +93,7 @@ class _ViewFeesState extends State<ViewFees> {
                     ),
                   ),
 
-                  Text(date,
+                  Text("${date.day}.${date.month}.${date.year}",
                     style: TextStyle(color: Colors.white,
                         fontSize: 16.0
                     )

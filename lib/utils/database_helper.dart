@@ -22,6 +22,15 @@ class Student{
   }
 }
 
+class FeesReceiptBuildingInformation{
+  String name;
+  int amount;
+  DateTime date;
+  int periodInMonths;
+
+  FeesReceiptBuildingInformation({this.name,this.amount,this.date,this.periodInMonths});
+}
+
 class EventData{
   DateTime date;
   String timing;
